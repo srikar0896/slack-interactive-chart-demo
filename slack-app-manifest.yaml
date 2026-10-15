@@ -1,0 +1,20 @@
+display_information:
+  name: Interactive Charts
+  description: Open live sample charts inside Slack messages.
+  background_color: "#217b78"
+features:
+  bot_user:
+    display_name: Interactive Charts
+    always_online: false
+  unfurl_domains:
+    - srikar0896.github.io
+oauth_config:
+  scopes:
+    bot:
+      - chat:write
+      - im:write
+      - links.embed:write
+settings:
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
