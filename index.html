@@ -6,7 +6,7 @@
 <meta name="description" content="A compact interactive 100% stacked bar chart with period and channel filters.">
 <meta property="og:title" content="Interactive Channel Mix">
 <meta property="og:description" content="Compare channel shares over time. Switch periods and explore filters in the live chart.">
-<meta property="og:image" content="https://srikar0896.github.io/slack-interactive-chart-demo/preview.svg">
+<meta property="og:image" content="https://wsrv.nl/?url=https%3A%2F%2Fsrikar0896.github.io%2Fslack-interactive-chart-demo%2Fpreview.svg%3Fv%3D2&output=png&w=960&h=540">
 <title>Interactive Channel Mix</title>
 <style>
 :root{color-scheme:light;--ink:#1b3038;--muted:#788991;--line:#e8eef0;--teal:#187f79}
@@ -29,7 +29,7 @@ main{width:100%;height:100vh;height:100dvh;padding:7px 9px 5px;overflow:hidden;b
 .filter-count{min-width:14px;height:14px;display:grid;place-items:center;border-radius:99px;background:#e8f3f2;color:#126f6a;font-size:8px}
 .plot{flex:1 1 auto;min-height:45px;display:flex;flex-direction:column;padding:0 3px 2px}
 #chart{flex:1 1 auto;min-height:0;width:100%}.chart{display:block;width:100%;height:100%;overflow:visible}
-.legend{flex:0 0 auto;min-height:16px;display:flex;align-items:center;justify-content:center;gap:4px 12px;padding:1px 2px;color:#687c83;font-size:9px;line-height:1.2}
+.legend{flex:0 0 auto;min-height:16px;display:flex;align-items:center;justify-content:center;gap:4px 12px;padding:1px 2px;margin-bottom:18px;color:#687c83;font-size:9px;line-height:1.2}
 .legend span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}.swatch{width:7px;height:7px;border-radius:2px;flex:none}
 .filter-panel{position:absolute;z-index:2;top:41px;right:8px;width:min(350px,calc(100% - 16px));padding:8px;border:1px solid #e0e8e9;border-radius:10px;background:rgba(255,255,255,.98);box-shadow:0 10px 24px rgba(26,55,63,.15);transform-origin:top right;animation:filter-in 180ms cubic-bezier(.2,.8,.2,1)}
 .filter-panel[hidden]{display:none}
@@ -40,7 +40,7 @@ main{width:100%;height:100vh;height:100dvh;padding:7px 9px 5px;overflow:hidden;b
 .filter-field select:focus{border-color:#61aaa5;box-shadow:0 0 0 2px rgba(31,139,132,.12)}
 @media(max-width:430px){main{padding:5px 6px 4px}.topbar{min-height:34px;gap:4px;padding:3px 5px 3px 7px}.title{font-size:12px}.actions{gap:4px}.period-button{min-width:29px;height:24px;padding:0 4px;font-size:9px}.filter-toggle{height:27px;gap:4px;padding:0 6px;font-size:9px}.filter-panel{top:37px;right:6px;width:min(310px,calc(100% - 12px));padding:7px}.filter-grid{gap:6px}}
 @media(max-width:315px){.title{max-width:68px}.filter-toggle{padding:0 5px}.filter-toggle svg{display:none}.period-button{min-width:26px}}
-@media(max-height:220px){.topbar{min-height:30px}.period-button{height:22px}.filter-toggle{height:25px}.legend{min-height:12px}.filter-panel{top:33px;padding:5px}.filter-field select{height:24px}}
+@media(max-height:220px){.topbar{min-height:30px}.period-button{height:22px}.filter-toggle{height:25px}.legend{min-height:12px;margin-bottom:12px}.filter-panel{top:33px;padding:5px}.filter-field select{height:24px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
