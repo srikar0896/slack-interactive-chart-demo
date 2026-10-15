@@ -99,11 +99,13 @@ function render(){
  const keys=regionEl.value==="all"?["north","south","west"]:[regionEl.value];
  const values=data.flatMap(row=>keys.map(key=>row[key][metric]));
  const peak=Math.max(...values),max=Math.max(4,Math.ceil(peak/4)*4);
- const left=58,right=946,top=12,bottom=207,height=bottom-top,width=right-left,band=width/data.length;
+ const chartRoot=document.getElementById("chart"),chartWidth=chartRoot.clientWidth||960,chartHeight=chartRoot.clientHeight||520;
+ const viewHeight=Math.max(280,Math.round(960*chartHeight/chartWidth));
+ const left=58,right=946,top=Math.round(viewHeight*.06),bottom=Math.round(viewHeight*.77),height=bottom-top,width=right-left,band=width/data.length;
  const x=i=>left+band*i+band/2,y=value=>bottom-(value/max)*height,type=typeEl.value;
- let svg='<svg class="chart" viewBox="0 0 960 246" preserveAspectRatio="none" role="img" aria-label="'+metricLabels[metric]+', last '+period+' months">';
+ let svg='<svg class="chart" viewBox="0 0 960 '+viewHeight+'" preserveAspectRatio="none" role="img" aria-label="'+metricLabels[metric]+', last '+period+' months">';
  svg+='<defs><linearGradient id="areaNorth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+colors.north+'" stop-opacity=".2"/><stop offset="1" stop-color="'+colors.north+'" stop-opacity="0"/></linearGradient><linearGradient id="areaSouth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+colors.south+'" stop-opacity=".16"/><stop offset="1" stop-color="'+colors.south+'" stop-opacity="0"/></linearGradient><linearGradient id="areaWest" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+colors.west+'" stop-opacity=".15"/><stop offset="1" stop-color="'+colors.west+'" stop-opacity="0"/></linearGradient></defs>';
- for(let i=0;i<=4;i++){const value=max*i/4,yy=y(value),label=metric==="conversion"?value.toFixed(1)+"%":Math.round(value);svg+='<line x1="'+left+'" y1="'+yy+'" x2="'+right+'" y2="'+yy+'" stroke="#e8eef0" stroke-dasharray="3 5"/><text x="'+(left-9)+'" y="'+(yy+4)+'" text-anchor="end" fill="#8a989d" font-size="19">'+label+'</text>'}
+ for(let i=0;i<=4;i++){const value=max*i/4,yy=y(value),label=metric==="conversion"?value.toFixed(1)+"%":Math.round(value);svg+='<line x1="'+left+'" y1="'+yy+'" x2="'+right+'" y2="'+yy+'" stroke="#e8eef0" stroke-dasharray="3 5"/><text x="'+(left-9)+'" y="'+(yy+4)+'" text-anchor="end" fill="#8a989d" font-size="22">'+label+'</text>'}
  svg+='<line x1="'+left+'" y1="'+bottom+'" x2="'+right+'" y2="'+bottom+'" stroke="#d7e1e3"/>';
  if(type==="bar"){
   const barWidth=Math.min(30,band*.68/keys.length);
@@ -117,7 +119,7 @@ function render(){
    points.forEach(point=>{const radius=type==="scatter"?6:4.8;svg+='<circle cx="'+point.x+'" cy="'+point.y+'" r="'+radius+'" fill="'+colors[key]+'" stroke="#fff" stroke-width="2.5"><title>'+regions[key]+' · '+point.month+': '+point.value+(metric==="conversion"?"%":"")+'</title></circle>'});
   });
  }
- data.forEach((row,i)=>{svg+='<text x="'+x(i)+'" y="235" text-anchor="middle" fill="#87959a" font-size="19">'+row.month+'</text>'});
+ data.forEach((row,i)=>{svg+='<text x="'+x(i)+'" y="'+Math.round(viewHeight*.88)+'" text-anchor="middle" fill="#87959a" font-size="22">'+row.month+'</text>'});
  svg+='</svg>';document.getElementById("chart").innerHTML=svg;
  document.getElementById("chartTitle").textContent=metricLabels[metric];
  document.getElementById("legend").innerHTML=keys.map(key=>'<span><i class="swatch" style="background:'+colors[key]+'"></i>'+regions[key]+'</span>').join("");
@@ -127,6 +129,7 @@ document.querySelectorAll(".period-button").forEach(button=>button.addEventListe
 [metricEl,regionEl,typeEl].forEach(element=>element.addEventListener("change",render));
 filterToggle.addEventListener("click",()=>{const open=filterToggle.getAttribute("aria-expanded")!=="true";filterToggle.setAttribute("aria-expanded",String(open));filterPanel.hidden=!open});
 document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!filterPanel.hidden){filterPanel.hidden=true;filterToggle.setAttribute("aria-expanded","false");filterToggle.focus()}});
+new ResizeObserver(render).observe(document.getElementById("chart"));
 render();
 </script>
 </body>
