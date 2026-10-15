@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="A single interactive chart sized for Slack messages, with compact period and data filters.">
-<meta property="og:title" content="Interactive revenue chart">
-<meta property="og:description" content="Explore the live chart by time period, measure, and region.">
+<meta name="description" content="A compact interactive 100% stacked bar chart with period and channel filters.">
+<meta property="og:title" content="Interactive Channel Mix">
+<meta property="og:description" content="Compare channel shares over time. Switch periods and explore filters in the live chart.">
 <meta property="og:image" content="https://srikar0896.github.io/slack-interactive-chart-demo/preview.svg">
-<title>Interactive revenue chart</title>
+<title>Interactive Channel Mix</title>
 <style>
-:root{color-scheme:light;--ink:#1b3038;--muted:#788991;--line:#e8eef0;--wash:#f3f7f7;--teal:#187f79;--blue:#6878c8;--amber:#d5904d}
+:root{color-scheme:light;--ink:#1b3038;--muted:#788991;--line:#e8eef0;--teal:#187f79}
 *{box-sizing:border-box}
 html,body{width:100%;height:100%;margin:0;overflow:hidden}
 body{min-width:280px;background:#f4f7f8;color:var(--ink);font:12px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
@@ -20,39 +20,39 @@ main{width:100%;height:100vh;height:100dvh;padding:7px 9px 5px;overflow:hidden;b
 .title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:720;letter-spacing:-.025em}
 .actions{flex:0 0 auto;display:flex;align-items:center;gap:6px}
 .periods{display:flex;align-items:center;gap:1px;padding:2px;border-radius:8px;background:#f0f4f4}
-.period-button{min-width:33px;height:25px;padding:0 6px;border:0;border-radius:6px;background:transparent;color:#718189;font-size:10px;font-weight:700;cursor:pointer;transition:background 180ms cubic-bezier(.2,.8,.2,1),color 180ms cubic-bezier(.2,.8,.2,1),transform 180ms cubic-bezier(.2,.8,.2,1)}
+.period-button{min-width:33px;height:25px;padding:0 6px;border:0;border-radius:6px;background:transparent;color:#718189;font-size:10px;font-weight:700;cursor:pointer;transition:background 180ms,color 180ms,transform 180ms}
 .period-button[aria-pressed="true"]{background:#fff;color:#1d4749;box-shadow:0 1px 4px rgba(21,53,62,.13)}
 .period-button:hover{color:#116c68}.period-button:active,.filter-toggle:active{transform:scale(.96)}
-.filter-toggle{height:29px;display:flex;align-items:center;gap:5px;padding:0 8px;border:1px solid #e2e9ea;border-radius:8px;background:#fff;color:#4c636b;font-size:10px;font-weight:700;cursor:pointer;transition:color 180ms cubic-bezier(.2,.8,.2,1),border-color 180ms cubic-bezier(.2,.8,.2,1),transform 180ms cubic-bezier(.2,.8,.2,1)}
+.filter-toggle{height:29px;display:flex;align-items:center;gap:5px;padding:0 8px;border:1px solid #e2e9ea;border-radius:8px;background:#fff;color:#4c636b;font-size:10px;font-weight:700;cursor:pointer;transition:color 180ms,border-color 180ms,transform 180ms}
 .filter-toggle:hover,.filter-toggle[aria-expanded="true"]{border-color:#9dc9c6;color:#126f6a}
 .filter-toggle svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .filter-count{min-width:14px;height:14px;display:grid;place-items:center;border-radius:99px;background:#e8f3f2;color:#126f6a;font-size:8px}
 .plot{flex:1 1 auto;min-height:45px;display:flex;flex-direction:column;padding:0 3px 2px}
 #chart{flex:1 1 auto;min-height:0;width:100%}.chart{display:block;width:100%;height:100%;overflow:visible}
-.legend{flex:0 0 15px;display:flex;align-items:center;justify-content:center;gap:13px;color:#687c83;font-size:9px}
-.legend span{display:inline-flex;align-items:center;gap:5px}.swatch{width:7px;height:7px;border-radius:50%}
+.legend{flex:0 0 auto;min-height:16px;display:flex;align-items:center;justify-content:center;gap:4px 12px;padding:1px 2px;color:#687c83;font-size:9px;line-height:1.2}
+.legend span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}.swatch{width:7px;height:7px;border-radius:2px;flex:none}
 .filter-panel{position:absolute;z-index:2;top:41px;right:8px;width:min(350px,calc(100% - 16px));padding:8px;border:1px solid #e0e8e9;border-radius:10px;background:rgba(255,255,255,.98);box-shadow:0 10px 24px rgba(26,55,63,.15);transform-origin:top right;animation:filter-in 180ms cubic-bezier(.2,.8,.2,1)}
 .filter-panel[hidden]{display:none}
 @keyframes filter-in{from{opacity:0;transform:translateY(-3px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
-.filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.filter-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
 .filter-field{display:grid;gap:4px;min-width:0;color:#718188;font-size:9px;font-weight:700}
 .filter-field select{width:100%;min-width:0;height:28px;padding:0 20px 0 7px;border:1px solid #e1e8e9;border-radius:7px;background:#fff;color:#2e454c;font-size:10px;outline:none}
 .filter-field select:focus{border-color:#61aaa5;box-shadow:0 0 0 2px rgba(31,139,132,.12)}
-@media(max-width:430px){main{padding:5px 6px 4px}.topbar{min-height:34px;gap:4px;padding:3px 5px 3px 7px}.title{font-size:12px}.actions{gap:4px}.period-button{min-width:29px;height:24px;padding:0 4px;font-size:9px}.filter-toggle{height:27px;gap:4px;padding:0 6px;font-size:9px}.filter-panel{top:37px;right:6px;width:min(310px,calc(100% - 12px));padding:7px}.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-field:last-child{grid-column:span 2}}
-@media(max-width:315px){.title{max-width:74px}.filter-toggle{padding:0 5px}.filter-toggle svg{display:none}.period-button{min-width:26px}}
-@media(max-height:220px){.topbar{min-height:30px}.period-button{height:22px}.filter-toggle{height:25px}.legend{flex-basis:12px}.filter-panel{top:33px;padding:5px}.filter-field select{height:24px}}
+@media(max-width:430px){main{padding:5px 6px 4px}.topbar{min-height:34px;gap:4px;padding:3px 5px 3px 7px}.title{font-size:12px}.actions{gap:4px}.period-button{min-width:29px;height:24px;padding:0 4px;font-size:9px}.filter-toggle{height:27px;gap:4px;padding:0 6px;font-size:9px}.filter-panel{top:37px;right:6px;width:min(310px,calc(100% - 12px));padding:7px}.filter-grid{gap:6px}}
+@media(max-width:315px){.title{max-width:68px}.filter-toggle{padding:0 5px}.filter-toggle svg{display:none}.period-button{min-width:26px}}
+@media(max-height:220px){.topbar{min-height:30px}.period-button{height:22px}.filter-toggle{height:25px}.legend{min-height:12px}.filter-panel{top:33px;padding:5px}.filter-field select{height:24px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
-<main><section class="chart-shell" aria-label="Interactive revenue chart">
+<main><section class="chart-shell" aria-label="Interactive channel mix chart">
   <header class="topbar">
-    <div class="title" id="chartTitle">Revenue index</div>
+    <div class="title" id="chartTitle">Channel mix</div>
     <div class="actions">
       <div class="periods" role="group" aria-label="Time period">
         <button class="period-button" type="button" data-period="3" aria-pressed="false">3M</button>
-        <button class="period-button" type="button" data-period="6" aria-pressed="false">6M</button>
-        <button class="period-button" type="button" data-period="12" aria-pressed="true">12M</button>
+        <button class="period-button" type="button" data-period="6" aria-pressed="true">6M</button>
+        <button class="period-button" type="button" data-period="12" aria-pressed="false">12M</button>
       </div>
       <button class="filter-toggle" id="filterToggle" type="button" aria-expanded="false" aria-controls="filterPanel">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h12M4.5 8h7M6.5 12h3"/><circle cx="5" cy="4" r="1.3" fill="white"/><circle cx="10.5" cy="8" r="1.3" fill="white"/></svg>
@@ -63,72 +63,101 @@ main{width:100%;height:100vh;height:100dvh;padding:7px 9px 5px;overflow:hidden;b
   <div class="plot"><div id="chart" aria-live="polite"></div><div class="legend" id="legend"></div></div>
   <div class="filter-panel" id="filterPanel" hidden>
     <div class="filter-grid">
-      <label class="filter-field">Measure<select id="metric" aria-label="Measure"><option value="revenue">Revenue index</option><option value="active">Active users</option><option value="conversion">Conversion rate</option></select></label>
-      <label class="filter-field">Region<select id="region" aria-label="Region"><option value="all">All regions</option><option value="north">North</option><option value="south">South</option><option value="west">West</option></select></label>
-      <label class="filter-field">Style<select id="chartType" aria-label="Chart style"><option value="area">Area</option><option value="line">Line</option><option value="bar">Bars</option><option value="scatter">Scatter</option></select></label>
+      <label class="filter-field">Measure<select id="measure" aria-label="Measure"><option value="share">Share (%)</option><option value="volume">Volume</option></select></label>
+      <label class="filter-field">Highlight<select id="highlight" aria-label="Highlight channel"><option value="all">All channels</option><option value="direct">Direct</option><option value="mail">Mail Ad</option><option value="affiliate">Affiliate Ad</option><option value="video">Video Ad</option><option value="search">Search Engine</option></select></label>
     </div>
   </div>
 </section></main>
 <script>
-const rows=[
-{month:"Jan",north:{active:48,conversion:3.2,revenue:43},south:{active:35,conversion:2.6,revenue:31},west:{active:27,conversion:3.8,revenue:26}},
-{month:"Feb",north:{active:53,conversion:3.4,revenue:47},south:{active:38,conversion:2.8,revenue:33},west:{active:30,conversion:3.6,revenue:29}},
-{month:"Mar",north:{active:57,conversion:3.1,revenue:51},south:{active:41,conversion:3.0,revenue:38},west:{active:31,conversion:4.0,revenue:32}},
-{month:"Apr",north:{active:55,conversion:3.7,revenue:53},south:{active:46,conversion:3.1,revenue:40},west:{active:36,conversion:3.9,revenue:35}},
-{month:"May",north:{active:62,conversion:3.8,revenue:58},south:{active:47,conversion:3.4,revenue:44},west:{active:39,conversion:4.1,revenue:39}},
-{month:"Jun",north:{active:66,conversion:4.0,revenue:63},south:{active:51,conversion:3.6,revenue:47},west:{active:42,conversion:4.3,revenue:44}},
-{month:"Jul",north:{active:64,conversion:3.9,revenue:66},south:{active:54,conversion:3.8,revenue:51},west:{active:46,conversion:4.2,revenue:48}},
-{month:"Aug",north:{active:72,conversion:4.2,revenue:70},south:{active:57,conversion:3.7,revenue:55},west:{active:49,conversion:4.5,revenue:53}},
-{month:"Sep",north:{active:76,conversion:4.4,revenue:75},south:{active:61,conversion:4.0,revenue:58},west:{active:52,conversion:4.6,revenue:57}},
-{month:"Oct",north:{active:79,conversion:4.3,revenue:79},south:{active:65,conversion:4.1,revenue:63},west:{active:57,conversion:4.8,revenue:61}},
-{month:"Nov",north:{active:85,conversion:4.6,revenue:85},south:{active:69,conversion:4.3,revenue:67},west:{active:61,conversion:4.9,revenue:66}},
-{month:"Dec",north:{active:91,conversion:4.8,revenue:92},south:{active:74,conversion:4.5,revenue:72},west:{active:66,conversion:5.1,revenue:71}}
+const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+// The channel values follow the Apache ECharts normalization example's five-series pattern.
+const source=[
+ [100,302,301,334,390,330,320,360,375,395,420,455],
+ [320,132,101,134,90,230,210,190,170,180,210,240],
+ [220,182,191,234,290,330,310,340,360,390,410,430],
+ [150,212,201,154,190,330,410,390,420,460,500,540],
+ [820,832,901,934,1290,1330,1320,1360,1400,1450,1520,1600]
 ];
-const regions={north:"North",south:"South",west:"West"};
-const colors={north:"#187f79",south:"#6878c8",west:"#d5904d"};
-const metricLabels={revenue:"Revenue index",active:"Active users",conversion:"Conversion rate"};
-const metricEl=document.getElementById("metric"),regionEl=document.getElementById("region"),typeEl=document.getElementById("chartType");
+const series=[
+ {key:"direct",name:"Direct",color:"#5070dd",label:"#fff"},
+ {key:"mail",name:"Mail Ad",color:"#b6d634",label:"#273019"},
+ {key:"affiliate",name:"Affiliate Ad",color:"#505372",label:"#fff"},
+ {key:"video",name:"Video Ad",color:"#ff994d",label:"#fff"},
+ {key:"search",name:"Search Engine",color:"#0ca8df",label:"#fff"}
+];
+const rows=months.map((month,index)=>({month,values:source.map(values=>values[index])}));
+const measureEl=document.getElementById("measure"),highlightEl=document.getElementById("highlight");
 const filterPanel=document.getElementById("filterPanel"),filterToggle=document.getElementById("filterToggle");
-let period=12;
+let period=6;
 function updateFilterCount(){
- const count=Number(metricEl.value!=="revenue")+Number(regionEl.value!=="all")+Number(typeEl.value!=="area");
+ const count=Number(measureEl.value!=="share")+Number(highlightEl.value!=="all");
  document.getElementById("filterCount").textContent=String(count);
 }
 function render(){
- const data=rows.slice(-period),metric=metricEl.value;
- const keys=regionEl.value==="all"?["north","south","west"]:[regionEl.value];
- const values=data.flatMap(row=>keys.map(key=>row[key][metric]));
- const peak=Math.max(...values),max=Math.max(4,Math.ceil(peak/4)*4);
- const chartRoot=document.getElementById("chart"),chartWidth=chartRoot.clientWidth||960,chartHeight=chartRoot.clientHeight||520;
- const viewHeight=Math.max(280,Math.round(960*chartHeight/chartWidth));
- const left=58,right=946,top=Math.round(viewHeight*.06),bottom=Math.round(viewHeight*.77),height=bottom-top,width=right-left,band=width/data.length,labelPx=Math.max(10,Math.min(15,chartWidth/48)),labelSize=labelPx*960/chartWidth,lineWidth=Math.max(2.4,Math.min(3.2,chartWidth/220))*960/chartWidth,pointRadius=Math.max(3.2,Math.min(4.5,chartWidth/90))*960/chartWidth,markerStroke=1.5*960/chartWidth;
- const x=i=>left+band*i+band/2,y=value=>bottom-(value/max)*height,type=typeEl.value;
- let svg='<svg class="chart" viewBox="0 0 960 '+viewHeight+'" preserveAspectRatio="none" role="img" aria-label="'+metricLabels[metric]+', last '+period+' months">';
- svg+='<defs><linearGradient id="areaNorth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+colors.north+'" stop-opacity=".2"/><stop offset="1" stop-color="'+colors.north+'" stop-opacity="0"/></linearGradient><linearGradient id="areaSouth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+colors.south+'" stop-opacity=".16"/><stop offset="1" stop-color="'+colors.south+'" stop-opacity="0"/></linearGradient><linearGradient id="areaWest" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+colors.west+'" stop-opacity=".15"/><stop offset="1" stop-color="'+colors.west+'" stop-opacity="0"/></linearGradient></defs>';
- for(let i=0;i<=4;i++){const value=max*i/4,yy=y(value),label=metric==="conversion"?value.toFixed(1)+"%":Math.round(value);svg+='<line x1="'+left+'" y1="'+yy+'" x2="'+right+'" y2="'+yy+'" stroke="#e8eef0" stroke-dasharray="3 5"/><text x="'+(left-9)+'" y="'+(yy+4)+'" text-anchor="end" fill="#8a989d" font-size="'+labelSize+'">'+label+'</text>'}
- svg+='<line x1="'+left+'" y1="'+bottom+'" x2="'+right+'" y2="'+bottom+'" stroke="#d7e1e3"/>';
- if(type==="bar"){
-  const barWidth=Math.min(30,band*.68/keys.length);
-  data.forEach((row,i)=>keys.forEach((key,j)=>{const value=row[key][metric],bx=left+i*band+(band-keys.length*barWidth)/2+j*barWidth,by=y(value);svg+='<rect x="'+bx+'" y="'+by+'" width="'+Math.max(2,barWidth-3)+'" height="'+(bottom-by)+'" rx="4" fill="'+colors[key]+'"><title>'+regions[key]+' · '+row.month+': '+value+(metric==="conversion"?"%":"")+'</title></rect>'}));
- }else{
-  keys.forEach(key=>{
-   const points=data.map((row,i)=>({x:x(i),y:y(row[key][metric]),value:row[key][metric],month:row.month}));
-   const path=points.map((point,i)=>(i?"L":"M")+point.x+" "+point.y).join(" ");
-   if(type==="area"){const fill=path+" L"+points.at(-1).x+" "+bottom+" L"+points[0].x+" "+bottom+" Z";svg+='<path d="'+fill+'" fill="url(#area'+key[0].toUpperCase()+key.slice(1)+')"/>'}
-   if(type!=="scatter")svg+='<path d="'+path+'" fill="none" stroke="'+colors[key]+'" stroke-width="'+lineWidth+'" stroke-linecap="round" stroke-linejoin="round"/>';
-   points.forEach(point=>{const radius=type==="scatter"?Math.max(4,Math.min(5,chartWidth/80))*960/chartWidth:pointRadius;svg+='<circle cx="'+point.x+'" cy="'+point.y+'" r="'+radius+'" fill="'+colors[key]+'" stroke="#fff" stroke-width="'+markerStroke+'"><title>'+regions[key]+' · '+point.month+': '+point.value+(metric==="conversion"?"%":"")+'</title></circle>'});
-  });
+ const data=rows.slice(-period),measure=measureEl.value,highlight=highlightEl.value;
+ const totals=data.map(row=>row.values.reduce((sum,value)=>sum+value,0));
+ const maxTotal=Math.ceil(Math.max(...totals)/100)*100;
+ const chartRoot=document.getElementById("chart");
+ const chartWidth=chartRoot.clientWidth||640,chartHeight=chartRoot.clientHeight||360;
+ const viewHeight=Math.max(180,Math.round(960*chartHeight/chartWidth));
+ const left=64,right=946,top=Math.round(viewHeight*.09),bottom=Math.round(viewHeight*.73);
+ const plotHeight=bottom-top,width=right-left,band=width/data.length;
+ const labelPx=Math.max(10,Math.min(15,chartWidth/48)),labelSize=labelPx*960/chartWidth;
+ const x=index=>left+band*index+band/2;
+ const cumulative=(row,index)=>row.values.slice(0,index+1).reduce((sum,value)=>sum+value,0);
+ const coordinate=(value,total)=>bottom-(measure==="share"?value/total:value/maxTotal)*plotHeight;
+ const opacityFor=key=>highlight==="all"||highlight===key?1:.24;
+ let svg='<svg class="chart" viewBox="0 0 960 '+viewHeight+'" preserveAspectRatio="none" role="img" aria-label="Channel mix by month, last '+period+' months, '+(measure==="share"?"normalized to 100 percent":"volume")+'">';
+ for(let tick=0;tick<=4;tick++){
+  const fraction=tick/4,yy=bottom-fraction*plotHeight;
+  const label=measure==="share"?Math.round(fraction*100)+"%":Math.round(maxTotal*fraction).toLocaleString();
+  svg+='<line x1="'+left+'" y1="'+yy+'" x2="'+right+'" y2="'+yy+'" stroke="#e8eef0" stroke-dasharray="3 5"/><text x="'+(left-9)+'" y="'+(yy+labelSize*.32)+'" text-anchor="end" fill="#89969a" font-size="'+labelSize+'">'+label+'</text>';
  }
- data.forEach((row,i)=>{svg+='<text x="'+x(i)+'" y="'+Math.round(viewHeight*.88)+'" text-anchor="middle" fill="#87959a" font-size="'+labelSize+'">'+row.month+'</text>'});
- svg+='</svg>';document.getElementById("chart").innerHTML=svg;
- document.getElementById("chartTitle").textContent=metricLabels[metric];
- document.getElementById("legend").innerHTML=keys.map(key=>'<span><i class="swatch" style="background:'+colors[key]+'"></i>'+regions[key]+'</span>').join("");
+ svg+='<line x1="'+left+'" y1="'+bottom+'" x2="'+right+'" y2="'+bottom+'" stroke="#d7e1e3"/>';
+ // Soft connectors between columns echo the example's normalized variation bands.
+ for(let seriesIndex=0;seriesIndex<series.length;seriesIndex++){
+  const topPoints=data.map((row,index)=>x(index)+" "+coordinate(cumulative(row,seriesIndex),totals[index]));
+  const lowerPoints=data.map((row,index)=>x(index)+" "+coordinate(seriesIndex===0?0:cumulative(row,seriesIndex-1),totals[index]));
+  const d="M"+topPoints.join(" L")+" L"+lowerPoints.slice().reverse().join(" L")+" Z";
+  svg+='<path d="'+d+'" fill="'+series[seriesIndex].color+'" fill-opacity=".14"/>';
+ }
+ const barWidth=Math.min(64,band*.72);
+ data.forEach((row,index)=>{
+  let previous=0;
+  row.values.forEach((value,seriesIndex)=>{
+   const item=series[seriesIndex],fraction=value/totals[index];
+   const yTop=coordinate(previous+value,totals[index]),yBottom=coordinate(previous,totals[index]);
+   const height=Math.max(0,yBottom-yTop),barOpacity=opacityFor(item.key);
+   const details=item.name+" · "+row.month+": "+Math.round(value).toLocaleString()+" ("+Math.round(fraction*100)+"%)";
+   svg+='<rect x="'+(x(index)-barWidth/2)+'" y="'+yTop+'" width="'+barWidth+'" height="'+height+'" fill="'+item.color+'" fill-opacity="'+barOpacity+'" stroke="#fff" stroke-width="1"><title>'+details+'</title></rect>';
+   const label=measure==="share"?Math.round(fraction*100)+"%":Math.round(value).toLocaleString();
+   if(height*chartHeight/viewHeight>=labelPx*1.35&&barWidth*chartWidth/960>=20){
+    svg+='<text x="'+x(index)+'" y="'+((yTop+yBottom)/2+labelSize*.34)+'" text-anchor="middle" fill="'+item.label+'" font-size="'+labelSize+'" font-weight="650" opacity="'+barOpacity+'" pointer-events="none">'+label+'</text>';
+   }
+   previous+=value;
+  });
+  svg+='<text x="'+x(index)+'" y="'+Math.round(viewHeight*.83)+'" text-anchor="middle" fill="#7e8d92" font-size="'+labelSize+'">'+row.month+'</text>';
+ });
+ svg+='</svg>';
+ chartRoot.innerHTML=svg;
+ document.getElementById("legend").innerHTML=series.map(item=>'<span><i class="swatch" style="background:'+item.color+'"></i>'+item.name+'</span>').join("");
+ document.getElementById("chartTitle").textContent=measure==="share"?"Channel mix":"Channel volume";
  updateFilterCount();
 }
-document.querySelectorAll(".period-button").forEach(button=>button.addEventListener("click",()=>{period=Number(button.dataset.period);document.querySelectorAll(".period-button").forEach(item=>item.setAttribute("aria-pressed",String(item===button)));render()}));
-[metricEl,regionEl,typeEl].forEach(element=>element.addEventListener("change",render));
-filterToggle.addEventListener("click",()=>{const open=filterToggle.getAttribute("aria-expanded")!=="true";filterToggle.setAttribute("aria-expanded",String(open));filterPanel.hidden=!open});
-document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!filterPanel.hidden){filterPanel.hidden=true;filterToggle.setAttribute("aria-expanded","false");filterToggle.focus()}});
+document.querySelectorAll(".period-button").forEach(button=>button.addEventListener("click",()=>{
+ period=Number(button.dataset.period);
+ document.querySelectorAll(".period-button").forEach(item=>item.setAttribute("aria-pressed",String(item===button)));
+ render();
+}));
+[measureEl,highlightEl].forEach(element=>element.addEventListener("change",render));
+filterToggle.addEventListener("click",()=>{
+ const open=filterToggle.getAttribute("aria-expanded")!=="true";
+ filterToggle.setAttribute("aria-expanded",String(open));
+ filterPanel.hidden=!open;
+});
+document.addEventListener("keydown",event=>{
+ if(event.key==="Escape"&&!filterPanel.hidden){filterPanel.hidden=true;filterToggle.setAttribute("aria-expanded","false");filterToggle.focus();}
+});
 new ResizeObserver(render).observe(document.getElementById("chart"));
 render();
 </script>
